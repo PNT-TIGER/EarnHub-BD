@@ -1,9 +1,26 @@
 services:
   - type: web
-    name: earnhub
+    name: earnhub-web
     env: node
     buildCommand: npm install
     startCommand: node server.js
     envVars:
-      - key: NODE_VERSION
-        value: 18
+      - key: TELEGRAM_BOT_TOKEN
+        value: 8932261850:AAFDn7uS5yNkSVTWQ6b4_B-1y3lK-37y3ME
+      - key: WEBAPP_URL
+        value: https://free-earn-hub.com
+      - key: ADMIN_CHAT_ID
+        value: "7797816241"
+
+  - type: worker
+    name: earnhub-bot
+    env: node
+    buildCommand: npm install
+    startCommand: node bot.js
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        value: 8932261850:AAFDn7uS5yNkSVTWQ6b4_B-1y3lK-37y3ME
+      - key: WEBAPP_URL
+        value: https://free-earn-hub.com
+      - key: ADMIN_CHAT_ID
+        value: "7797816241"
