@@ -32,9 +32,9 @@ app.use('/admin', (req, res, next) => {
   adminAuth(req, res, next);
 }, adminRoutes);
 
-app.listen(PORT, () => {
-  console.log(`EarnHub running at http://localhost:${PORT}`);
-  console.log(`Admin panel: http://localhost:${PORT}/admin`);
-  console.log('Default admin: admin / admin123');
-  console.log('Run bot separately: node bot.js');
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`EarnHub running on port ${PORT}`);
+  console.log(`Admin: http://localhost:${PORT}/admin`);
+  console.log('Admin: admin / admin123');
+  console.log('Bot: node bot.js');
 });

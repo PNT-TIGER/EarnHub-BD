@@ -3,7 +3,8 @@ const db = require('./database');
 const bcrypt = require('bcryptjs');
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8932261850:AAFDn7uS5yNkSVTWQ6b4_B-1y3lK-37y3ME';
-const WEBAPP_URL = process.env.WEBAPP_URL || 'http://localhost:3000';
+const WEBAPP_URL = process.env.WEBAPP_URL || 'https://free-earn-hub.com';
+const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || '7797816241';
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 
@@ -162,6 +163,10 @@ bot.onText(/\/referral/, (msg) => {
   );
 });
 
-console.log('Telegram Bot started!');
+function notifyAdmin(message) {
+  try {
+    bot.sendMessage(ADMIN_CHAT_ID, message, { parse_mode: 'Markdown' });
+  } catch(e) {}
+}
 
-module.exports = bot;
+module.exports = { bot, notifyAdmin };
