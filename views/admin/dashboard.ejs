@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - EarnHub Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">EarnHub Admin</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/admin" class="nav-item active">Dashboard</a>
+        <a href="/admin/users" class="nav-item">Users</a>
+        <a href="/admin/withdrawals" class="nav-item">Withdrawals</a>
+        <a href="/admin/ads" class="nav-item">Ads</a>
+        <a href="/admin/tasks" class="nav-item">Tasks</a>
+        <a href="/admin/giftcodes" class="nav-item">Gift Codes</a>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="admin-badge"><%= admin %></span>
+        <a href="/admin/logout" class="nav-item logout">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Dashboard</h1>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card stat-blue">
+          <div class="stat-number"><%= stats.totalUsers %></div>
+          <div class="stat-label">Total Users</div>
+          <div class="stat-sub"><%= stats.activeUsers %> active / <%= stats.bannedUsers %> banned</div>
+        </div>
+        <div class="stat-card stat-green">
+          <div class="stat-number">$<%= stats.totalEarned.toFixed(4) %></div>
+          <div class="stat-label">Total Earned (All Users)</div>
+        </div>
+        <div class="stat-card stat-orange">
+          <div class="stat-number"><%= stats.pendingWithdrawals %></div>
+          <div class="stat-label">Pending Withdrawals</div>
+        </div>
+        <div class="stat-card stat-purple">
+          <div class="stat-number">$<%= stats.approvedWithdrawals.toFixed(4) %></div>
+          <div class="stat-label">Approved Withdrawals</div>
+        </div>
+        <div class="stat-card stat-teal">
+          <div class="stat-number"><%= stats.todayAdViews %></div>
+          <div class="stat-label">Today's Ad Views</div>
+        </div>
+        <div class="stat-card stat-gold">
+          <div class="stat-number"><%= stats.activeGiftCodes %></div>
+          <div class="stat-label">Active Gift Codes</div>
+        </div>
+      </div>
+
+      <div class="card-row">
+        <div class="card">
+          <div class="card-header">
+            <h3>Recent Users</h3>
+            <a href="/admin/users" class="btn btn-sm btn-outline">View All</a>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr><th>Name</th><th>Email</th><th>Balance</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <% recentUsers.forEach(u => { %>
+                <tr>
+                  <td><%= u.name %></td>
+                  <td><%= u.email %></td>
+                  <td>$<%= u.balance.toFixed(4) %></td>
+                  <td><span class="badge badge-<%= u.status %>"><%= u.status %></span></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Pending Withdrawals</h3>
+            <a href="/admin/withdrawals?filter=pending" class="btn btn-sm btn-outline">View All</a>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr><th>User</th><th>Amount</th><th>Wallet</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                <% pendingWithdrawals.forEach(w => { %>
+                <% const wu = users.find(u => u.id === w.user_id); %>
+                <tr>
+                  <td><%= wu ? wu.email : 'Unknown' %></td>
+                  <td>$<%= w.amount.toFixed(4) %></td>
+                  <td style="word-break:break-all;font-family:monospace;font-size:11px;max-width:200px;"><%= w.wallet_address %></td>
+                  <td>
+                    <form method="POST" action="/admin/withdrawals/<%= w.id %>/approve" class="inline-form">
+                      <button class="btn btn-xs btn-success">Approve</button>
+                    </form>
+                    <form method="POST" action="/admin/withdrawals/<%= w.id %>/reject" class="inline-form">
+                      <button class="btn btn-xs btn-danger">Reject</button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+                <% if (pendingWithdrawals.length === 0) { %>
+                <tr><td colspan="4" class="text-center">No pending withdrawals</td></tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

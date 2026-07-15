@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Withdrawals - EarnHub Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><span class="sidebar-title">EarnHub Admin</span></div>
+      <nav class="sidebar-nav">
+        <a href="/admin" class="nav-item">Dashboard</a>
+        <a href="/admin/users" class="nav-item">Users</a>
+        <a href="/admin/withdrawals" class="nav-item active">Withdrawals</a>
+        <a href="/admin/ads" class="nav-item">Ads</a>
+        <a href="/admin/tasks" class="nav-item">Tasks</a>
+        <a href="/admin/giftcodes" class="nav-item">Gift Codes</a>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="admin-badge"><%= admin %></span>
+        <a href="/admin/logout" class="nav-item logout">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Withdrawal Management</h1>
+      </header>
+
+      <div class="filter-bar">
+        <a href="/admin/withdrawals" class="btn btn-sm <%= filter === 'all' ? 'btn-primary' : 'btn-outline' %>">All</a>
+        <a href="/admin/withdrawals?filter=pending" class="btn btn-sm <%= filter === 'pending' ? 'btn-primary' : 'btn-outline' %>">Pending</a>
+        <a href="/admin/withdrawals?filter=approved" class="btn btn-sm <%= filter === 'approved' ? 'btn-primary' : 'btn-outline' %>">Approved</a>
+        <a href="/admin/withdrawals?filter=rejected" class="btn btn-sm <%= filter === 'rejected' ? 'btn-primary' : 'btn-outline' %>">Rejected</a>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Wallet Address</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% withdrawals.forEach(w => { %>
+                <% const wu = users.find(u => u.id === w.user_id); %>
+                <tr>
+                  <td>#<%= w.id %></td>
+                  <td><%= wu ? wu.email : 'Unknown' %></td>
+                  <td class="text-green"><strong>$<%= w.amount.toFixed(4) %></strong></td>
+                  <td><%= w.method %></td>
+                  <td class="wallet-full" style="word-break:break-all;font-family:monospace;font-size:12px;max-width:300px;"><%= w.wallet_address %></td>
+                  <td><span class="badge badge-<%= w.status %>"><%= w.status %></span></td>
+                  <td><%= new Date(w.created_at).toLocaleDateString() %></td>
+                  <td class="actions-cell">
+                    <% if (w.status === 'pending') { %>
+                      <form method="POST" action="/admin/withdrawals/<%= w.id %>/approve" class="inline-form">
+                        <button class="btn btn-xs btn-success">Approve</button>
+                      </form>
+                      <form method="POST" action="/admin/withdrawals/<%= w.id %>/reject" class="inline-form">
+                        <button class="btn btn-xs btn-danger">Reject</button>
+                      </form>
+                    <% } else { %>
+                      <span class="text-muted">-</span>
+                    <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+                <% if (withdrawals.length === 0) { %>
+                <tr><td colspan="8" class="text-center">No withdrawals found</td></tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks - EarnHub Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><span class="sidebar-title">EarnHub Admin</span></div>
+      <nav class="sidebar-nav">
+        <a href="/admin" class="nav-item">Dashboard</a>
+        <a href="/admin/users" class="nav-item">Users</a>
+        <a href="/admin/withdrawals" class="nav-item">Withdrawals</a>
+        <a href="/admin/ads" class="nav-item">Ads</a>
+        <a href="/admin/tasks" class="nav-item active">Tasks</a>
+        <a href="/admin/giftcodes" class="nav-item">Gift Codes</a>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="admin-badge"><%= admin %></span>
+        <a href="/admin/logout" class="nav-item logout">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <h1>Tasks Management</h1>
+      </header>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Create New Task</h3>
+        </div>
+        <div class="card-body">
+          <form method="POST" action="/admin/tasks/create" class="form-inline">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" name="title" placeholder="Task title" required class="form-input">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <input type="text" name="description" placeholder="Task description" class="form-input">
+            </div>
+            <div class="form-group">
+              <label>Reward ($)</label>
+              <input type="number" name="reward" step="0.01" value="0.05" required class="form-input">
+            </div>
+            <div class="form-group">
+              <label>Type</label>
+              <select name="type" class="form-input">
+                <option value="social">Social</option>
+                <option value="referral">Referral</option>
+                <option value="survey">Survey</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Task</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>All Tasks</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Reward</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% tasks.forEach(task => { %>
+                <tr>
+                  <td>#<%= task.id %></td>
+                  <td><strong><%= task.title %></strong><br><small><%= task.description %></small></td>
+                  <td class="text-green">$<%= task.reward.toFixed(4) %></td>
+                  <td><span class="badge badge-<%= task.type %>"><%= task.type %></span></td>
+                  <td><span class="badge badge-<%= task.status %>"><%= task.status %></span></td>
+                  <td class="actions-cell">
+                    <form method="POST" action="/admin/tasks/<%= task.id %>/toggle" class="inline-form">
+                      <button class="btn btn-xs <%= task.status === 'active' ? 'btn-danger' : 'btn-success' %>">
+                        <%= task.status === 'active' ? 'Disable' : 'Enable' %>
+                      </button>
+                    </form>
+                    <form method="POST" action="/admin/tasks/<%= task.id %>/delete" class="inline-form">
+                      <button class="btn btn-xs btn-danger">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
